@@ -1,17 +1,30 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../Components/Navbar/Navbar';
 
 const Layout = () => {
+  const location = useLocation();
   return (
-    <>
-      <header>
-        <div className='max-w-6xl mx-auto px-4'>
-          <Navbar />
-        </div>
-      </header>
-      {/* outlet content */}
-      <Outlet />
-    </>
+    <section
+      className={
+        location.pathname === '/'
+          ? `h-screen bg-main-bg bg-no-repeat bg-cover`
+          : `bg-white`
+      }
+    >
+      <div
+        className={
+          location.pathname === '/' ? 'h-screen bg-[#00000095]' : 'bg-white'
+        }
+      >
+        <header>
+          <div className='max-w-6xl mx-auto px-4'>
+            <Navbar />
+          </div>
+        </header>
+        {/* outlet content */}
+        <Outlet />
+      </div>
+    </section>
   );
 };
 

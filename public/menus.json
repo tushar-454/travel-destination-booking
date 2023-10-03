@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name": "News",
+    "path": "/news"
+  },
+  {
+    "id": 2,
+    "name": "Destination",
+    "path": "/destination"
+  },
+  {
+    "id": 3,
+    "name": "Blog",
+    "path": "/blog"
+  },
+  {
+    "id": 4,
+    "name": "Contact",
+    "path": "/contact"
+  }
+]
