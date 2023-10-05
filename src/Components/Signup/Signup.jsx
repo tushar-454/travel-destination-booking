@@ -1,9 +1,11 @@
 /* eslint-disable no-useless-escape */
 // import PropTypes from 'prop-types'
+import { updateProfile } from 'firebase/auth';
 import { useContext, useState } from 'react';
 import { FcCellPhone } from 'react-icons/fc';
 import { Link, useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
+import Auth from '../../firebase/firebase-config';
 import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
@@ -107,8 +109,14 @@ const Signup = () => {
 
     registerAccountEmailPass(email, password)
       .then(() => {
+        updateProfile(Auth.currentUser, {
+          displayName: name,
+          photoURL: photoUrl,
+        })
+          .then()
+          .catch((error) => swal('Error an occur', error.message, 'error'));
         swal('Account created.', '', 'success');
-        navigate('/');
+        setTimeout(() => navigate('/'), 1500);
         setRegister({ ...registerInit });
       })
       .catch((error) => swal('Error an occur', error.message, 'error'));

@@ -1,22 +1,21 @@
-import { signOut } from 'firebase/auth';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { Link, useLoaderData, useLocation } from 'react-router-dom';
 import swal from 'sweetalert';
 import logoBlack from '../../assets/images/logo.png';
 import logoWhite from '../../assets/logo.svg';
-import Auth from '../../firebase/firebase-config';
 import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
 import CustomLink from '../UI/CustomLink';
 
 const Navbar = () => {
+  const [isSignoutShow, setIsSignoutShow] = useState(false);
   const menus = useLoaderData();
   const location = useLocation();
-  const { user } = useContext(AuthContext);
+  const { user, signOutFunc } = useContext(AuthContext);
 
   const handleSignout = () => {
-    signOut(Auth)
+    signOutFunc()
       .then(() => {
         swal('Signout Successfull', '', 'error');
       })
@@ -70,11 +69,27 @@ const Navbar = () => {
       {/* login button  */}
       <div className='loginButton'>
         {user ? (
-          <Button
-            displayName='Signout'
-            type='button'
-            handleClick={handleSignout}
-          />
+          <div className='flex gap-3 items-center relative bg-white p-2 rounded-full pl-4'>
+            <p className='text-xl'>
+              {user.displayName
+                ? user.displayName
+                : user.reloadUserInfo.providerUserInfo[0].screenName}
+            </p>
+            <img
+              src={user.photoURL}
+              className='w-[50px] h-[50px] object-cover cursor-pointer rounded-full'
+              onClick={() => setIsSignoutShow(!isSignoutShow)}
+            />
+            {isSignoutShow && (
+              <div className='absolute top-20 right-0'>
+                <Button
+                  displayName='Signout'
+                  type='button'
+                  handleClick={handleSignout}
+                />
+              </div>
+            )}
+          </div>
         ) : (
           <CustomLink displayName='Login' path='/login' state='Login' />
         )}

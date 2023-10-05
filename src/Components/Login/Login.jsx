@@ -60,7 +60,7 @@ const Login = () => {
     loginEmailPass(email, password)
       .then(() => {
         swal('Login Successfull.', '', 'success');
-        navigate('/');
+        setTimeout(() => navigate('/'), 1500);
         setLogin({ ...loginInit });
       })
       .catch((error) => swal('Error an occur', error.message, 'error'));
