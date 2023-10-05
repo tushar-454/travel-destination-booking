@@ -14,7 +14,7 @@ const Input = ({ id, label, type, name, placeholder, error }) => {
         name={name}
         id={id}
         placeholder={placeholder}
-        className='w-full outline-none border p-2 border-[#C5C5C5] font-medium font font-montserrat'
+        className='w-full outline-none border p-2 border-[#C5C5C5] font-medium font font-montserrat focus:border-[#F9A51A]'
       />
       {error ?? <p className='text-red-500 italic transition'>{error}</p>}
     </div>

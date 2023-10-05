@@ -1,6 +1,6 @@
 // import PropTypes from 'prop-types'
 
-import { FcGoogle } from 'react-icons/fc';
+import { FcCellPhone, FcGoogle } from 'react-icons/fc';
 import { TfiTwitterAlt } from 'react-icons/tfi';
 import { Link } from 'react-router-dom';
 import Button from '../UI/Button';
@@ -81,6 +81,12 @@ const Signup = () => {
           </div>
           {/* log in with  */}
           <div className='my-8 space-y-3'>
+            <Link to={'/signupwithphone'}>
+              <LoginWith
+                displayName={'Signup with phone'}
+                icon={<FcCellPhone className='text-3xl' />}
+              />
+            </Link>
             <LoginWith
               displayName={'Login with google'}
               icon={<FcGoogle className='text-3xl' />}
