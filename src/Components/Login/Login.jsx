@@ -1,4 +1,5 @@
-import { useContext } from 'react';
+/* eslint-disable no-useless-escape */
+import { useContext, useState } from 'react';
 import { FcCellPhone, FcGoogle } from 'react-icons/fc';
 import { TfiTwitterAlt } from 'react-icons/tfi';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,9 +9,20 @@ import Button from '../UI/Button';
 import Input from '../UI/Input';
 import LoginWith from '../UI/LoginWith';
 
+const loginInit = {
+  email: '',
+  password: '',
+};
+const errorInit = {
+  email: '',
+  password: '',
+};
+
 const Login = () => {
+  const [login, setLogin] = useState({ ...loginInit });
+  const [error, setError] = useState({ ...errorInit });
+  const { loginGoogle, loginEmailPass } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { loginGoogle } = useContext(AuthContext);
 
   const handleGoogleLogin = () => {
     loginGoogle()
@@ -20,6 +32,40 @@ const Login = () => {
       })
       .catch((error) => swal('Error an ocure', error.massage, 'error'));
   };
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setLogin((prev) => ({ ...prev, [name]: value }));
+    setError((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const handleLogin = (e) => {
+    const { email, password } = login;
+    e.preventDefault();
+    if (!email) {
+      setError((prev) => ({ ...prev, email: 'Email Required.' }));
+      return;
+    } else if (
+      !/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-]+)(\.[a-zA-Z]{2,5}){1,2}$/.test(
+        email
+      )
+    ) {
+      setError((prev) => ({ ...prev, email: 'Email not valid !' }));
+      return;
+    }
+    if (!password) {
+      setError((prev) => ({ ...prev, password: 'Password Required' }));
+      return;
+    }
+    loginEmailPass(email, password)
+      .then(() => {
+        swal('Login Successfull.', '', 'success');
+        navigate('/');
+        setLogin({ ...loginInit });
+      })
+      .catch((error) => swal('Error an occur', error.message, 'error'));
+  };
+
   return (
     <div className='max-w-6xl mx-auto px-4'>
       <div className='w-full flex justify-center'>
@@ -30,14 +76,16 @@ const Login = () => {
           </div>
           {/* login form  */}
           <div className='form'>
-            <form className='space-y-6'>
+            <form className='space-y-6' onSubmit={handleLogin}>
               <Input
                 id='email'
                 label='Enter your email'
                 name='email'
                 placeholder='jhonduo@trqp.fto'
                 type='email'
-                error={''}
+                error={error.email}
+                value={login.email}
+                handleChange={handleInput}
               />
               <Input
                 id='password'
@@ -45,7 +93,10 @@ const Login = () => {
                 name='password'
                 placeholder='dfgWEI93$#F'
                 type='password'
-                error={''}
+                toggle={true}
+                error={error.password}
+                value={login.password}
+                handleChange={handleInput}
               />
               {/* remember and forgot  */}
               <div className='flex justify-between items-center'>

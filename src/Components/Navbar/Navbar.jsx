@@ -1,12 +1,28 @@
+import { signOut } from 'firebase/auth';
+import { useContext } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { Link, useLoaderData, useLocation } from 'react-router-dom';
+import swal from 'sweetalert';
 import logoBlack from '../../assets/images/logo.png';
 import logoWhite from '../../assets/logo.svg';
+import Auth from '../../firebase/firebase-config';
+import { AuthContext } from '../AuthProvider/AuthProvider';
+import Button from '../UI/Button';
 import CustomLink from '../UI/CustomLink';
 
 const Navbar = () => {
   const menus = useLoaderData();
   const location = useLocation();
+  const { user } = useContext(AuthContext);
+
+  const handleSignout = () => {
+    signOut(Auth)
+      .then(() => {
+        swal('Signout Successfull', '', 'error');
+      })
+      .catch((error) => console.log(error.message));
+  };
+
   return (
     <div className='flex justify-between items-center py-4'>
       {/* nav logo  */}
@@ -53,7 +69,15 @@ const Navbar = () => {
       </div>
       {/* login button  */}
       <div className='loginButton'>
-        <CustomLink displayName='Login' path='/login' state='Login' />
+        {user ? (
+          <Button
+            displayName='Signout'
+            type='button'
+            handleClick={handleSignout}
+          />
+        ) : (
+          <CustomLink displayName='Login' path='/login' state='Login' />
+        )}
       </div>
     </div>
   );

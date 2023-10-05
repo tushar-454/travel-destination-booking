@@ -2,7 +2,8 @@
 // import PropTypes from 'prop-types'
 import { useContext, useState } from 'react';
 import { FcCellPhone } from 'react-icons/fc';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import swal from 'sweetalert';
 import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
@@ -27,7 +28,8 @@ const errorInit = {
 const Signup = () => {
   const [register, setRegister] = useState({ ...registerInit });
   const [error, setError] = useState({ ...errorInit });
-  const { loginEmailPass } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { registerAccountEmailPass } = useContext(AuthContext);
 
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -70,6 +72,12 @@ const Signup = () => {
     if (!password) {
       setError((prev) => ({ ...prev, password: 'Password Required' }));
       return;
+    } else if (password.length < 8) {
+      setError((prev) => ({
+        ...prev,
+        password: 'Password must be 8 cherecters.',
+      }));
+      return;
     } else if (
       !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+])[0-9a-zA-Z!@#$%^&*()_+]{8,}$/.test(
         password
@@ -78,7 +86,7 @@ const Signup = () => {
       setError((prev) => ({
         ...prev,
         password:
-          'Password must be uppercase,lowercase, number & special character mixed !',
+          'Password must be uppercase, lowercase, number & special character mixed !',
       }));
       return;
     }
@@ -97,12 +105,13 @@ const Signup = () => {
       return;
     }
 
-    loginEmailPass(email, password)
-      .then((user) => {
-        console.log(user);
+    registerAccountEmailPass(email, password)
+      .then(() => {
+        swal('Account created.', '', 'success');
+        navigate('/');
         setRegister({ ...registerInit });
       })
-      .catch((error) => console.log(error.message));
+      .catch((error) => swal('Error an occur', error.message, 'error'));
   };
   return (
     <div className='max-w-6xl mx-auto px-4'>

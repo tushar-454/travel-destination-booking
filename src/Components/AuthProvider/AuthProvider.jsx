@@ -2,6 +2,7 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
 import PropTypes from 'prop-types';
@@ -19,9 +20,14 @@ const AuthProvider = ({ children }) => {
     return signInWithPopup(Auth, new GoogleAuthProvider());
   };
 
-  const loginEmailPass = (email, password) => {
+  const registerAccountEmailPass = (email, password) => {
     setLoading(false);
     return createUserWithEmailAndPassword(Auth, email, password);
+  };
+
+  const loginEmailPass = (email, password) => {
+    setLoading(false);
+    return signInWithEmailAndPassword(Auth, email, password);
   };
 
   useEffect(() => {
@@ -36,6 +42,7 @@ const AuthProvider = ({ children }) => {
     user,
     loading,
     loginGoogle,
+    registerAccountEmailPass,
     loginEmailPass,
   };
   return (
