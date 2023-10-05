@@ -1,7 +1,7 @@
 import {
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
 import PropTypes from 'prop-types';
@@ -21,7 +21,7 @@ const AuthProvider = ({ children }) => {
 
   const loginEmailPass = (email, password) => {
     setLoading(false);
-    return signInWithEmailAndPassword(Auth, email, password);
+    return createUserWithEmailAndPassword(Auth, email, password);
   };
 
   useEffect(() => {

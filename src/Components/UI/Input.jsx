@@ -49,7 +49,7 @@ const Input = ({
           </p>
         )}
       </div>
-      {error ?? <p className='text-red-500 italic transition'>{error}</p>}
+      {error && <p className='text-red-500 italic transition'>{error}</p>}
     </div>
   );
 };

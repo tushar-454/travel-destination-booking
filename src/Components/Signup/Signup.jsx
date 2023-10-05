@@ -1,11 +1,109 @@
+/* eslint-disable no-useless-escape */
 // import PropTypes from 'prop-types'
+import { useContext, useState } from 'react';
 import { FcCellPhone } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
 import LoginWith from '../UI/LoginWith';
 
+const registerInit = {
+  name: '',
+  email: '',
+  photoUrl: '',
+  password: '',
+  confirmPassword: '',
+};
+
+const errorInit = {
+  name: '',
+  email: '',
+  photoUrl: '',
+  password: '',
+  confirmPassword: '',
+};
+
 const Signup = () => {
+  const [register, setRegister] = useState({ ...registerInit });
+  const [error, setError] = useState({ ...errorInit });
+  const { loginEmailPass } = useContext(AuthContext);
+
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setRegister((prev) => ({ ...prev, [name]: value }));
+    setError((prev) => ({ ...prev, [name]: '' }));
+  };
+  const handleRegister = (e) => {
+    e.preventDefault();
+    const { name, email, photoUrl, password, confirmPassword } = register;
+    if (!name) {
+      setError((prev) => ({ ...prev, name: 'Name Required' }));
+      return;
+    } else if (name.length < 4) {
+      setError((prev) => ({
+        ...prev,
+        name: 'Name have at least 4 charecters.',
+      }));
+      return;
+    }
+    if (!email) {
+      setError((prev) => ({ ...prev, email: 'Email Required.' }));
+      return;
+    } else if (
+      !/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-]+)(\.[a-zA-Z]{2,5}){1,2}$/.test(
+        email
+      )
+    ) {
+      setError((prev) => ({ ...prev, email: 'Email not valid !' }));
+      return;
+    }
+    if (!photoUrl) {
+      setError((prev) => ({ ...prev, photoUrl: 'Photo Url Required' }));
+      return;
+    } else if (
+      !/^https?:\/\/.*\/.*\.(png|gif|webp|jpeg|jpg)\??.*$/gim.test(photoUrl)
+    ) {
+      setError((prev) => ({ ...prev, photoUrl: 'Url not valid !' }));
+      return;
+    }
+    if (!password) {
+      setError((prev) => ({ ...prev, password: 'Password Required' }));
+      return;
+    } else if (
+      !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+])[0-9a-zA-Z!@#$%^&*()_+]{8,}$/.test(
+        password
+      )
+    ) {
+      setError((prev) => ({
+        ...prev,
+        password:
+          'Password must be uppercase,lowercase, number & special character mixed !',
+      }));
+      return;
+    }
+
+    if (!confirmPassword) {
+      setError((prev) => ({
+        ...prev,
+        confirmPassword: 'Confirm password Required',
+      }));
+      return;
+    } else if (password !== confirmPassword) {
+      setError((prev) => ({
+        ...prev,
+        confirmPassword: 'Confirm password and password not matched !',
+      }));
+      return;
+    }
+
+    loginEmailPass(email, password)
+      .then((user) => {
+        console.log(user);
+        setRegister({ ...registerInit });
+      })
+      .catch((error) => console.log(error.message));
+  };
   return (
     <div className='max-w-6xl mx-auto px-4'>
       <div className='w-full flex justify-center'>
@@ -18,14 +116,16 @@ const Signup = () => {
           </div>
           {/* signup form  */}
           <div className='form'>
-            <form className='space-y-6'>
+            <form className='space-y-6' onSubmit={handleRegister}>
               <Input
                 id='name'
                 label='Enter your full name'
                 name='name'
                 placeholder='jhon dou'
                 type='text'
-                error={''}
+                error={error.name}
+                value={register.name}
+                handleChange={handleInput}
               />
               <Input
                 id='email'
@@ -33,7 +133,19 @@ const Signup = () => {
                 name='email'
                 placeholder='jhonduo@trqp.fto'
                 type='email'
-                error={''}
+                error={error.email}
+                value={register.email}
+                handleChange={handleInput}
+              />
+              <Input
+                id='photoUrl'
+                label='Provide your photo url'
+                name='photoUrl'
+                placeholder='https://photo.com/myphoto.jpg'
+                type='url'
+                error={error.photoUrl}
+                value={register.photoUrl}
+                handleChange={handleInput}
               />
               <Input
                 id='password'
@@ -41,17 +153,22 @@ const Signup = () => {
                 name='password'
                 placeholder='dfgWEI93$#F'
                 type='password'
-                error={''}
                 toggle={true}
+                error={error.password}
+                value={register.password}
+                handleChange={handleInput}
               />
+
               <Input
                 id='confirmPassword'
                 label='Confirm your password'
                 name='confirmPassword'
                 placeholder='dfgWEI93$#F'
                 type='password'
-                error={''}
                 toggle={true}
+                error={error.confirmPassword}
+                value={register.confirmPassword}
+                handleChange={handleInput}
               />
 
               <Button
