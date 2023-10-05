@@ -1,11 +1,25 @@
+import { useContext } from 'react';
 import { FcCellPhone, FcGoogle } from 'react-icons/fc';
 import { TfiTwitterAlt } from 'react-icons/tfi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import swal from 'sweetalert';
+import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
 import LoginWith from '../UI/LoginWith';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { loginGoogle } = useContext(AuthContext);
+
+  const handleGoogleLogin = () => {
+    loginGoogle()
+      .then(() => {
+        swal('Login successfully', '', 'success');
+        navigate('/');
+      })
+      .catch((error) => swal('Error an ocure', error.massage, 'error'));
+  };
   return (
     <div className='max-w-6xl mx-auto px-4'>
       <div className='w-full flex justify-center'>
@@ -84,6 +98,7 @@ const Login = () => {
               />
             </Link>
             <LoginWith
+              handleClick={handleGoogleLogin}
               displayName={'Login with google'}
               icon={<FcGoogle className='text-3xl' />}
             />
