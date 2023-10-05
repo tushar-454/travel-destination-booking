@@ -20,6 +20,7 @@ const Navbar = () => {
         swal('Signout Successfull', '', 'error');
       })
       .catch((error) => console.log(error.message));
+    setIsSignoutShow(false);
   };
 
   return (
