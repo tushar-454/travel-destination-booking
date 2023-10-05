@@ -1,7 +1,5 @@
 // import PropTypes from 'prop-types'
-
-import { FcCellPhone, FcGoogle } from 'react-icons/fc';
-import { TfiTwitterAlt } from 'react-icons/tfi';
+import { FcCellPhone } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
@@ -12,13 +10,13 @@ const Signup = () => {
     <div className='max-w-6xl mx-auto px-4'>
       <div className='w-full flex justify-center'>
         <div className='w-full sm:w-[570px] px-8 md:px-14 py-8 border border-[#ABABAB] rounded-md'>
-          {/* login title */}
+          {/* signup title */}
           <div className='title mb-8'>
             <h1 className='text-2xl font-bold font-montserrat'>
               Create an account
             </h1>
           </div>
-          {/* login form  */}
+          {/* signup form  */}
           <div className='form'>
             <form className='space-y-6'>
               <Input
@@ -44,6 +42,7 @@ const Signup = () => {
                 placeholder='dfgWEI93$#F'
                 type='password'
                 error={''}
+                toggle={true}
               />
               <Input
                 id='confirmPassword'
@@ -52,6 +51,7 @@ const Signup = () => {
                 placeholder='dfgWEI93$#F'
                 type='password'
                 error={''}
+                toggle={true}
               />
 
               <Button
@@ -87,14 +87,6 @@ const Signup = () => {
                 icon={<FcCellPhone className='text-3xl' />}
               />
             </Link>
-            <LoginWith
-              displayName={'Login with google'}
-              icon={<FcGoogle className='text-3xl' />}
-            />
-            <LoginWith
-              displayName={'Login with twitter'}
-              icon={<TfiTwitterAlt className='text-3xl text-[#1976D2]' />}
-            />
           </div>
         </div>
       </div>
