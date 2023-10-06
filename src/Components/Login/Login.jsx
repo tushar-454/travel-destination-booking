@@ -2,7 +2,7 @@
 import { useContext, useState } from 'react';
 import { FcCellPhone, FcGoogle } from 'react-icons/fc';
 import { TfiTwitterAlt } from 'react-icons/tfi';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
 import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
@@ -23,6 +23,7 @@ const Login = () => {
   const [error, setError] = useState({ ...errorInit });
   const { loginGoogle, loginEmailPass } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { user, loading } = useContext(AuthContext);
 
   const handleGoogleLogin = () => {
     loginGoogle()
@@ -65,6 +66,14 @@ const Login = () => {
       })
       .catch((error) => swal('Error an occur', error.message, 'error'));
   };
+
+  if (loading) {
+    return;
+  }
+
+  if (user) {
+    return <Navigate to={'/'} replace={true} />;
+  }
 
   return (
     <div className='max-w-6xl mx-auto px-4'>

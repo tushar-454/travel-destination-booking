@@ -4,9 +4,11 @@ import {
   signInWithPhoneNumber,
   updateProfile,
 } from 'firebase/auth';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useContext, useState } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import swal from 'sweetalert';
 import Auth from '../../firebase/firebase-config';
+import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
 import InputBtn from '../UI/InputBtn';
@@ -30,6 +32,8 @@ const errorInit = {
 const SignupWithPhone = () => {
   const [register, setRegister] = useState({ ...registerInit });
   const [error, setError] = useState({ ...errorInit });
+  const navigate = useNavigate();
+  const { user, loading } = useContext(AuthContext);
 
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -62,19 +66,27 @@ const SignupWithPhone = () => {
                 displayName: name,
                 photoURL: photoUrl,
               });
-              console.log('User signed in successfully.');
-              // ...
+              swal('Login successfull', '', 'success');
+              navigate('/');
             })
             .catch((error) => {
-              // User couldn't sign in (bad verification code?)
-              console.log(error.message);
+              // console.log(error.message);
+              swal('Error an occure', error.message, 'error');
             });
         }
       })
       .catch((error) => {
-        console.log('Error; SMS not sent', error.message);
+        swal('Error an occure', error.message, 'error');
       });
   };
+
+  if (loading) {
+    return;
+  }
+
+  if (user) {
+    return <Navigate to={'/'} replace={true} />;
+  }
 
   return (
     <div className='max-w-6xl mx-auto px-4'>

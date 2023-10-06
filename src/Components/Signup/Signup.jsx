@@ -3,7 +3,7 @@
 import { updateProfile } from 'firebase/auth';
 import { useContext, useState } from 'react';
 import { FcCellPhone } from 'react-icons/fc';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
 import Auth from '../../firebase/firebase-config';
 import { AuthContext } from '../AuthProvider/AuthProvider';
@@ -31,7 +31,7 @@ const Signup = () => {
   const [register, setRegister] = useState({ ...registerInit });
   const [error, setError] = useState({ ...errorInit });
   const navigate = useNavigate();
-  const { registerAccountEmailPass } = useContext(AuthContext);
+  const { loading, user, registerAccountEmailPass } = useContext(AuthContext);
 
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -121,6 +121,15 @@ const Signup = () => {
       })
       .catch((error) => swal('Error an occur', error.message, 'error'));
   };
+
+  if (loading) {
+    return;
+  }
+
+  if (user) {
+    return <Navigate to={'/'} replace={true} />;
+  }
+
   return (
     <div className='max-w-6xl mx-auto px-4'>
       <div className='w-full flex justify-center'>

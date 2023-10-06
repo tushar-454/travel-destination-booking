@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-escape */
 // import PropTypes from 'prop-types'
 import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import swal from 'sweetalert';
 import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
@@ -9,7 +9,7 @@ import Input from '../UI/Input';
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const { resetPass } = useContext(AuthContext);
+  const { loading, user, resetPass } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setEmail(e.target.value);
@@ -38,7 +38,13 @@ const ForgotPassword = () => {
         swal('Something else', `${error.message} || Please try again`, 'error')
       );
   };
+  if (loading) {
+    return;
+  }
 
+  if (user) {
+    return <Navigate to={'/'} replace={true} />;
+  }
   return (
     <div className='max-w-6xl mx-auto px-4'>
       <div className='w-full flex justify-center'>
