@@ -7,7 +7,7 @@ const Layout = () => {
     <section
       className={
         location.pathname === '/'
-          ? `h-screen bg-main-bg bg-no-repeat bg-cover`
+          ? `h-screen bg-[url('/src/assets/images/background.png')] bg-no-repeat bg-cover`
           : `bg-white`
       }
     >
