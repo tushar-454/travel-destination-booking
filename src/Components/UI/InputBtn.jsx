@@ -10,12 +10,16 @@ const InputBtn = ({
   success,
   select = false,
   handleBtnClick,
-  onChange,
-  btnText = 'Verify',
+  handleChange,
+  actionBtn,
+  id,
 }) => {
   return (
     <div className='flex flex-col gap-2 mt-3'>
-      <label htmlFor={htmlFor} className='text-black'>
+      <label
+        htmlFor={htmlFor}
+        className='block mb-1 font-montserrat text-[#272749] font-medium'
+      >
         {label}
       </label>
       {select && (
@@ -32,15 +36,16 @@ const InputBtn = ({
           type={type}
           name={name}
           id={htmlFor}
-          onChange={onChange}
+          onChange={handleChange}
           placeholder={placeholder}
           className='w-full px-3 py-2 rounded border border-line text-black outline-none transition text-[13px] focus:border-[#F9A51A]'
         />
         <button
-          className='px-5 py-2 rounded-tr rounded-br border bg-[#F9A51A]  border-[#F9A51A] text-white text-[13px] -ml-5'
+          id={id}
+          className='w-fit px-5 py-2 rounded-tr rounded-br border bg-[#F9A51A]  border-[#F9A51A] text-white text-[13px] -ml-5'
           onClick={handleBtnClick}
         >
-          {btnText}
+          {actionBtn}
         </button>
       </div>
       {error && <p className='text-[12px] text-red-600'>{error}</p>}
@@ -57,8 +62,9 @@ InputBtn.propTypes = {
   select: PropTypes.bool,
   error: PropTypes.string,
   success: PropTypes.string,
+  id: PropTypes.string,
   handleBtnClick: PropTypes.func,
-  onChange: PropTypes.func,
-  btnText: PropTypes.string,
+  handleChange: PropTypes.func,
+  actionBtn: PropTypes.string.isRequired,
 };
 export default InputBtn;
