@@ -11,6 +11,7 @@ const Input = ({
   value,
   handleChange,
   toggle = false,
+  disable = false,
 }) => {
   const [isShow, setIsShow] = useState(false);
   return (
@@ -29,6 +30,7 @@ const Input = ({
           value={value}
           onChange={handleChange}
           placeholder={placeholder}
+          disabled={disable}
           className={`w-full outline-none border p-2 border-[#C5C5C5] font-medium font font-montserrat focus:border-[#F9A51A] ${
             toggle && 'pr-11'
           }`}
@@ -64,6 +66,7 @@ Input.propTypes = {
   value: PropTypes.string,
   handleChange: PropTypes.func,
   toggle: PropTypes.bool,
+  disable: PropTypes.bool,
 };
 
 export default Input;

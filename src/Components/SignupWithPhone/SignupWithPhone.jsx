@@ -2,12 +2,14 @@
 import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
+  updateEmail,
   updateProfile,
 } from 'firebase/auth';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useContext, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
-import Auth from '../../firebase/firebase-config';
+import Auth, { storage } from '../../firebase/firebase-config';
 import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
@@ -32,6 +34,7 @@ const errorInit = {
 const SignupWithPhone = () => {
   const [register, setRegister] = useState({ ...registerInit });
   const [error, setError] = useState({ ...errorInit });
+  const [photoName, setPhotoName] = useState('');
   const navigate = useNavigate();
   const { user, loading } = useContext(AuthContext);
 
@@ -41,8 +44,24 @@ const SignupWithPhone = () => {
     setError((prev) => ({ ...prev, [name]: '' }));
   };
 
+  const handleProfileUpload = (e) => {
+    const { name } = e.target.files[0];
+    setPhotoName(name);
+    const imagesRef = ref(storage, `image/${name}`);
+    // 'file' comes from the Blob or File API
+    uploadBytes(imagesRef, e.target.files[0])
+      .then(() => {
+        getDownloadURL(imagesRef)
+          .then((url) => {
+            setRegister((prev) => ({ ...prev, photoUrl: url }));
+          })
+          .catch((error) => swal('Error an occur', error.massage, 'error'));
+      })
+      .catch((error) => swal('Error an occur', error.massage, 'error'));
+  };
+
   const handlePhoneSignin = (e) => {
-    const { email, name, phone, code, photoUrl } = register;
+    const { email, name, phone, photoUrl } = register;
     e.preventDefault();
     window.recaptchaVerifier = new RecaptchaVerifier(Auth, 'send-otp', {
       size: 'invisible',
@@ -54,9 +73,6 @@ const SignupWithPhone = () => {
         // SMS sent. Prompt user to type the code from the message, then sign the
         // user in with confirmationResult.confirm(code).
         window.confirmationResult = confirmationResult;
-
-        console.log(confirmationResult);
-        console.log('code send done');
         const code = prompt('Enter your verification code');
         if (code) {
           confirmationResult
@@ -66,6 +82,7 @@ const SignupWithPhone = () => {
                 displayName: name,
                 photoURL: photoUrl,
               });
+              updateEmail(currentUser.user, email).then(() => {});
               swal('Login successfull', '', 'success');
               navigate('/');
             })
@@ -121,6 +138,25 @@ const SignupWithPhone = () => {
                 value={register.photoUrl}
                 handleChange={handleInput}
               />
+              <div className='text-[2xl] outline-none border border-[#C5C5C5] px-5 py-2 bg-transparent duration-700 flex-col justify-center items-center block mb-1 font-montserrat text-[#272749] font-medium text-center transition hover:border-[#F9A51A]'>
+                <label
+                  className='block cursor-pointer text-center'
+                  htmlFor='profileImg'
+                >
+                  Upload Profile Picture
+                </label>
+                <input
+                  className='hidden'
+                  type='file'
+                  name='photoInput'
+                  id='profileImg'
+                  onChange={handleProfileUpload}
+                  accept='.png, .jpg, .jpeg'
+                />
+                <p className=' text-green-600 text-[14px] text-center'>
+                  {photoName}
+                </p>
+              </div>
               <Input
                 id='email'
                 label='Enter your email'

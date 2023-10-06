@@ -1,11 +1,12 @@
 /* eslint-disable no-useless-escape */
 // import PropTypes from 'prop-types'
 import { updateProfile } from 'firebase/auth';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useContext, useState } from 'react';
 import { FcCellPhone } from 'react-icons/fc';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import swal from 'sweetalert';
-import Auth from '../../firebase/firebase-config';
+import Auth, { storage } from '../../firebase/firebase-config';
 import { AuthContext } from '../AuthProvider/AuthProvider';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
@@ -30,6 +31,7 @@ const errorInit = {
 const Signup = () => {
   const [register, setRegister] = useState({ ...registerInit });
   const [error, setError] = useState({ ...errorInit });
+  const [photoName, setPhotoName] = useState('');
   const navigate = useNavigate();
   const { loading, user, registerAccountEmailPass } = useContext(AuthContext);
 
@@ -38,6 +40,21 @@ const Signup = () => {
     setRegister((prev) => ({ ...prev, [name]: value }));
     setError((prev) => ({ ...prev, [name]: '' }));
   };
+  // console.log(profileImg.current);
+  const handleProfileUpload = (e) => {
+    const { name } = e.target.files[0];
+    setPhotoName(name);
+    const imagesRef = ref(storage, `images/${name}`);
+    // 'file' comes from the Blob or File API
+    uploadBytes(imagesRef, e.target.files[0])
+      .then(() => {
+        getDownloadURL(imagesRef)
+          .then((url) => setRegister((prev) => ({ ...prev, photoUrl: url })))
+          .catch((error) => swal('Error an occur', error.massage, 'error'));
+      })
+      .catch((error) => swal('Error an occur', error.massage, 'error'));
+  };
+
   const handleRegister = (e) => {
     e.preventDefault();
     const { name, email, photoUrl, password, confirmPassword } = register;
@@ -62,15 +79,17 @@ const Signup = () => {
       setError((prev) => ({ ...prev, email: 'Email not valid !' }));
       return;
     }
-    if (!photoUrl) {
-      setError((prev) => ({ ...prev, photoUrl: 'Photo Url Required' }));
-      return;
-    } else if (
-      !/^https?:\/\/.*\/.*\.(png|gif|webp|jpeg|jpg)\??.*$/gim.test(photoUrl)
-    ) {
-      setError((prev) => ({ ...prev, photoUrl: 'Url not valid !' }));
-      return;
-    }
+
+    // if (!photoUrl) {
+    //   setError((prev) => ({ ...prev, photoUrl: 'Photo Url Required' }));
+    //   return;
+    // } else if (
+    //   !/^https?:\/\/.*\/.*\.(png|gif|webp|jpeg|jpg)\??.*$/gim.test(photoUrl)
+    // ) {
+    //   setError((prev) => ({ ...prev, photoUrl: 'Url not valid !' }));
+    //   return;
+    // }
+
     if (!password) {
       setError((prev) => ({ ...prev, password: 'Password Required' }));
       return;
@@ -163,16 +182,36 @@ const Signup = () => {
                 value={register.email}
                 handleChange={handleInput}
               />
-              <Input
+              {/* <Input
                 id='photoUrl'
-                label='Provide your photo url'
+                label='Your photo url'
                 name='photoUrl'
                 placeholder='https://photo.com/myphoto.jpg'
                 type='url'
                 error={error.photoUrl}
                 value={register.photoUrl}
                 handleChange={handleInput}
-              />
+                disable={true}
+              /> */}
+              <div className='text-[2xl] outline-none border border-[#C5C5C5] px-5 py-2 bg-transparent duration-700 flex-col justify-center items-center block mb-1 font-montserrat text-[#272749] font-medium text-center transition hover:border-[#F9A51A]'>
+                <label
+                  className='block cursor-pointer text-center'
+                  htmlFor='profileImg'
+                >
+                  Upload Profile Picture
+                </label>
+                <input
+                  className='hidden'
+                  type='file'
+                  name='photoInput'
+                  id='profileImg'
+                  onChange={handleProfileUpload}
+                  accept='.png, .jpg, .jpeg'
+                />
+                <p className=' text-green-600 text-[14px] text-center'>
+                  {photoName}
+                </p>
+              </div>
               <Input
                 id='password'
                 label='Enter your password'
