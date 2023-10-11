@@ -61,7 +61,7 @@ const SignupWithPhone = () => {
   };
 
   const handlePhoneSignin = (e) => {
-    const { email, name, phone, photoUrl } = register;
+    const { phone } = register;
     e.preventDefault();
     window.recaptchaVerifier = new RecaptchaVerifier(Auth, 'send-otp', {
       size: 'invisible',
@@ -73,26 +73,27 @@ const SignupWithPhone = () => {
         // SMS sent. Prompt user to type the code from the message, then sign the
         // user in with confirmationResult.confirm(code).
         window.confirmationResult = confirmationResult;
-        const code = prompt('Enter your verification code');
-        if (code) {
-          confirmationResult
-            .confirm(code)
-            .then((currentUser) => {
-              updateProfile(currentUser.user, {
-                displayName: name,
-                photoURL: photoUrl,
-              });
-              updateEmail(currentUser.user, email).then(() => {});
-              swal('Login successfull', '', 'success');
-              navigate('/');
-            })
-            .catch((error) => {
-              // console.log(error.message);
-              swal('Error an occure', error.message, 'error');
-            });
-        }
       })
       .catch((error) => {
+        swal('Error an occure', error.message, 'error');
+      });
+  };
+
+  const handleOptVerify = () => {
+    const { email, name, photoUrl, code } = register;
+    window.confirmationResult
+      .confirm(code)
+      .then((currentUser) => {
+        updateProfile(currentUser.user, {
+          displayName: name,
+          photoURL: photoUrl,
+        });
+        updateEmail(currentUser.user, email).then(() => {});
+        swal('Login successfull', '', 'success');
+        navigate('/');
+      })
+      .catch((error) => {
+        // console.log(error.message);
         swal('Error an occure', error.message, 'error');
       });
   };
@@ -193,6 +194,7 @@ const SignupWithPhone = () => {
                 error={error.code}
                 value={register.code}
                 handleChange={handleInput}
+                handleBtnClick={handleOptVerify}
               />
               <Button
                 displayName='Signin'
